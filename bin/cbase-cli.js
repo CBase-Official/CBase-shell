@@ -7,7 +7,7 @@ const chalk = require('chalk');
 
 const login = {
     command: 'login',
-    desc: 'logging in through NEAR protocol wallet',
+    desc: 'logging in through CBaseChain wallet',
     builder: (yargs) => yargs
         .option('walletUrl', {
             desc: 'URL of wallet to use',
@@ -63,7 +63,7 @@ const sendMoney = {
     desc: 'send tokens to given receiver',
     builder: (yargs) => yargs
         .option('amount', {
-            desc: 'Amount of NEAR tokens to send',
+            desc: 'Amount of CBase tokens to send',
             type: 'string',
         }),
     handler: exitOnError(main.sendMoney)
@@ -137,19 +137,19 @@ let config = require('../get-config')();
 yargs // eslint-disable-line
     .strict()
     .middleware(require('../utils/check-version'))
-    .scriptName('near')
+    .scriptName('cbase')
     .option('nodeUrl', {
-        desc: 'NEAR node URL',
+        desc: 'CBase node URL',
         type: 'string',
         default: 'http://localhost:3030'
     })
     .option('networkId', {
-        desc: 'NEAR network ID, allows using different keys based on network',
+        desc: 'CBase network ID, allows using different keys based on network',
         type: 'string',
         default: 'default'
     })
     .option('helperUrl', {
-        desc: 'NEAR contract helper URL',
+        desc: 'CBase contract helper URL',
         type: 'string',
     })
     .option('keyPath', {
@@ -162,7 +162,7 @@ yargs // eslint-disable-line
     })
 
     .option('walletUrl', {
-        desc: 'Website for NEAR Wallet',
+        desc: 'Website for CBase Wallet',
         type: 'string',
         hidden: true
     })
@@ -210,6 +210,6 @@ yargs // eslint-disable-line
     .recommendCommands()
     .demandCommand(1, chalk`Pass {bold --help} to see all available commands and options.`)
     .usage(chalk`Usage: {bold $0 <command> [options]}`)
-    .epilogue(chalk`Check out our epic whiteboard series: {bold http://near.ai/wbs}`)
+    .epilogue(chalk`Check out our epic whiteboard series`)
     .wrap(null)
     .argv;

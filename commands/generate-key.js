@@ -8,9 +8,9 @@ module.exports = {
     builder: (yargs) => yargs,
     handler: exitOnError(async (argv) => {
         await eventtracking.track(eventtracking.EVENT_ID_GENERATE_KEY_START, { network: argv.networkId });
-        let near = await require('../utils/connect')(argv);
+        let cbase = await require('../utils/connect')(argv);
         if (argv.accountId) {
-            const { deps: { keyStore } } = near.config;
+            const { deps: { keyStore } } = cbase.config;
             const existingKey = await keyStore.getKey(argv.networkId, argv.accountId);
             if (existingKey) {
                 console.log(`Account has existing key pair with ${existingKey.publicKey} public key`);

@@ -12,17 +12,17 @@ module.exports = {
             required: true
         }),
     handler: exitOnError(async (argv) => {
-        const near = await connect(argv);
+        const cbase = await connect(argv);
 
         switch (argv.epoch) {
         case 'current':
-            await validatorsInfo.showValidatorsTable(near, null);
+            await validatorsInfo.showValidatorsTable(cbase, null);
             break;
         case 'next':
-            await validatorsInfo.showNextValidatorsTable(near);
+            await validatorsInfo.showNextValidatorsTable(cbase);
             break;
         default:
-            await validatorsInfo.showValidatorsTable(near, argv.epoch);
+            await validatorsInfo.showValidatorsTable(cbase, argv.epoch);
             break;
         }
     })

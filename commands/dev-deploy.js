@@ -37,20 +37,19 @@ async function devDeploy(options) {
         throw new Error('Cannot create account as neither helperUrl nor masterAccount is specified in config for current NODE_ENV (see src/config.js)');
     }
 
-    const near = await connect(options);
-    const accountId = await createDevAccountIfNeeded({ ...options, near });
+    const cbase = await connect(options);
+    const accountId = await createDevAccountIfNeeded({ ...options, cbase });
     console.log(
         `Starting deployment. Account id: ${accountId}, node: ${nodeUrl}, helper: ${helperUrl}, file: ${wasmFile}`);
     const contractData = await readFile(wasmFile);
-    const account = await near.account(accountId);
+    const account = await cbase.account(accountId);
     await account.deployContract(contractData);
     console.log(`Done deploying to ${accountId}`);
     await eventtracking.track(eventtracking.EVENT_ID_DEV_DEPLOY_END, { node: options.nodeUrl, success: true });
 }
 
-async function createDevAccountIfNeeded({ near, keyStore, networkId, init }) {
+async function createDevAccountIfNeeded({ cbase, keyStore, networkId, init }) {
     // TODO: once examples and create-near-app use the dev-account.env file, we can remove the creation of dev-account
-    // https://github.com/nearprotocol/near-shell/issues/287
     const accountFilePath = 'neardev/dev-account';
     const accountFilePathEnv = 'neardev/dev-account.env';
     if (!init) {

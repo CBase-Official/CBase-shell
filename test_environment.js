@@ -24,9 +24,9 @@ class LocalTestEnvironment extends NodeEnvironment {
             storage:  this.createFakeStorage(),
             keyStore,
         });
-        const near = await nearlib.connect(config);
+        const cbase = await nearlib.connect(config);
 
-        const masterAccount = await near.account(testAccountName);
+        const masterAccount = await cbase.account(testAccountName);
         const randomKey = await nearlib.KeyPair.fromRandom('ed25519');
         const data = [...fs.readFileSync('./out/main.wasm')];
         await config.deps.keyStore.setKey(config.networkId, config.contractName, randomKey);

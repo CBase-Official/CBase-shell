@@ -25,9 +25,9 @@ module.exports = {
 async function scheduleFunctionCall(options) {
     await eventtracking.track(eventtracking.EVENT_ID_SCHEDULE_FN_CALL_START, { node: options.nodeUrl });
     console.log(`Scheduling a call: ${options.contractName}.${options.methodName}(${options.args || ''})` +
-        (options.amount && options.amount != '0' ? ` with attached ${options.amount} NEAR` : ''));
-    const near = await connect(options);
-    const account = await near.account(options.accountId);
+        (options.amount && options.amount != '0' ? ` with attached ${options.amount} CBASE` : ''));
+    const cbase = await connect(options);
+    const account = await cbase.account(options.accountId);
     const functionCallResponse = await account.functionCall(
         options.contractName,
         options.methodName,

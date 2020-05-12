@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/CBase-Official/CBase-shell#readme",
   "bin": {
-    "near": "./bin/cbase"
+    "cbase": "./bin/cbase"
   },
   "devDependencies": {
     "eslint": "^7.0.0",

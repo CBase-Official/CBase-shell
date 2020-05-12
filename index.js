@@ -36,9 +36,9 @@ exports.deploy = async function (options) {
     await eventtracking.track(eventtracking.EVENT_ID_DEPLOY_START, { node: options.nodeUrl });
     console.log(
         `Starting deployment. Account id: ${options.accountId}, node: ${options.nodeUrl}, helper: ${options.helperUrl}, file: ${options.wasmFile}`);
-    const near = await connect(options);
+    const cbase = await connect(options);
     const contractData = [...fs.readFileSync(options.wasmFile)];
-    const account = await near.account(options.accountId);
+    const account = await cbase.account(options.accountId);
     await account.deployContract(contractData);
     await eventtracking.track(eventtracking.EVENT_ID_DEPLOY_END, { node: options.nodeUrl, success: true });
 };
@@ -46,9 +46,9 @@ exports.deploy = async function (options) {
 exports.callViewFunction = async function (options) {
     await eventtracking.track(eventtracking.EVENT_ID_CALL_VIEW_FN_START, { node: options.nodeUrl });
     console.log(`View call: ${options.contractName}.${options.methodName}(${options.args || ''})`);
-    const near = await connect(options);
+    const cbase = await connect(options);
     // TODO: Figure out how to run readonly calls without account
-    const account = await near.account(options.accountId || options.masterAccount || 'register.near');
+    const account = await cbase.account(options.accountId || options.masterAccount || 'register.near');
     console.log(inspectResponse(await account.viewFunction(options.contractName, options.methodName, JSON.parse(options.args || '{}'))));
     await eventtracking.track(eventtracking.EVENT_ID_CALL_VIEW_FN_END, { node: options.nodeUrl, success: true });
 };
@@ -68,12 +68,12 @@ exports.login = async function (options) {
         console.log('Log in is not needed on this environment. Please use appropriate master account for shell operations.');
     } else {
         const newUrl = new URL(options.walletUrl + '/login/');
-        const title = 'NEAR Shell';
+        const title = 'CBase Shell';
         newUrl.searchParams.set('title', title);
         const keyPair = await KeyPair.fromRandom('ed25519');
         newUrl.searchParams.set('public_key', keyPair.getPublicKey());
 
-        console.log(chalk`\n{bold.yellow Please authorize NEAR Shell} on at least one of your accounts.`);
+        console.log(chalk`\n{bold.yellow Please authorize CBase Shell} on at least one of your accounts.`);
 
         // attempt to capture accountId automatically via browser callback
         let tempUrl;
@@ -108,7 +108,7 @@ exports.login = async function (options) {
         console.log(chalk`\n{dim If your browser doesn't automatically open, please visit this URL\n${newUrl.toString()}}`);
 
         const getAccountFromWebpage = async () => {
-            // capture account_id as provided by NEAR Wallet
+            // capture account_id as provided by CBase Wallet
             const [accountId] = await capture.payload(['account_id'], tempUrl, newUrl);
             return accountId;
         };
@@ -122,7 +122,7 @@ exports.login = async function (options) {
             return await new Promise((resolve) => {
                 rl.question(
                     chalk`Please authorize at least one account at the URL above.\n\n` +
-                    chalk`Which account did you authorize for use with NEAR Shell?\n` +
+                    chalk`Which account did you authorize for use with CBase Shell?\n` +
                     chalk`{bold Enter it here${redirectAutomaticallyHint}:}\n`, async (accountId) => {
                         resolve(accountId);
                     });
@@ -157,8 +157,8 @@ exports.login = async function (options) {
 
 exports.viewAccount = async function (options) {
     await eventtracking.track(eventtracking.EVENT_ID_ACCOUNT_STATE_START, { node: options.nodeUrl });
-    let near = await connect(options);
-    let account = await near.account(options.accountId);
+    let cbase = await connect(options);
+    let account = await cbase.account(options.accountId);
     let state = await account.state();
     if (state && state.amount) {
         state['formattedAmount'] = utils.format.formatNearAmount(state.amount);
@@ -173,8 +173,8 @@ exports.deleteAccount = async function (options) {
 
     console.log(
         `Deleting account. Account id: ${options.accountId}, node: ${options.nodeUrl}, helper: ${options.helperUrl}, beneficiary: ${options.beneficiaryId}`);
-    const near = await connect(options);
-    const account = await near.account(options.accountId);
+    const cbase = await connect(options);
+    const account = await cbase.account(options.accountId);
     await account.deleteAccount(options.beneficiaryId);
     console.log(`Account ${options.accountId} for network "${options.networkId}" was deleted.`);
     await eventtracking.track(eventtracking.EVENT_ID_DELETE_ACCOUNT_END, { node: options.nodeUrl, success: true });
@@ -182,8 +182,8 @@ exports.deleteAccount = async function (options) {
 
 exports.keys = async function (options) {
     await eventtracking.track(eventtracking.EVENT_ID_ACCOUNT_KEYS_START, { node: options.nodeUrl });
-    let near = await connect(options);
-    let account = await near.account(options.accountId);
+    let cbase = await connect(options);
+    let account = await cbase.account(options.accountId);
     let accessKeys = await account.getAccessKeys();
     console.log(`Keys for account ${options.accountId}`);
     console.log(inspectResponse(accessKeys));
@@ -192,9 +192,9 @@ exports.keys = async function (options) {
 
 exports.sendMoney = async function (options) {
     await eventtracking.track(eventtracking.EVENT_ID_SEND_TOKENS_START, { node: options.nodeUrl, amount: options.amount });
-    console.log(`Sending ${options.amount} NEAR to ${options.receiver} from ${options.sender}`);
-    const near = await connect(options);
-    const account = await near.account(options.sender);
+    console.log(`Sending ${options.amount} cbase to ${options.receiver} from ${options.sender}`);
+    const cbase = await connect(options);
+    const account = await cbase.account(options.sender);
     console.log(inspectResponse(await account.sendMoney(options.receiver, utils.format.parseNearAmount(options.amount))));
     await eventtracking.track(eventtracking.EVENT_ID_SEND_TOKENS_END, { node: options.nodeUrl, success: true });
 };
@@ -202,8 +202,8 @@ exports.sendMoney = async function (options) {
 exports.stake = async function (options) {
     await eventtracking.track(eventtracking.EVENT_ID_STAKE_START, { node: options.nodeUrl, amount: options.amount });
     console.log(`Staking ${options.amount} (${utils.format.parseNearAmount(options.amount)}) on ${options.accountId} with public key = ${options.stakingKey}.`);
-    const near = await connect(options);
-    const account = await near.account(options.accountId);
+    const cbase = await connect(options);
+    const account = await cbase.account(options.accountId);
     const result = await account.stake(options.stakingKey, utils.format.parseNearAmount(options.amount));
     console.log(inspectResponse(result));
     await eventtracking.track(eventtracking.EVENT_ID_STAKE_END, { node: options.nodeUrl, success: true });

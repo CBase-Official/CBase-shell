@@ -92,9 +92,8 @@ module.exports = { payload, callback, cancel };
     helper to render a proper success page
  */
 function renderWebPage(message){
-    const title = 'NEAR Account Authorization Success';
+    const title = 'CBase Account Authorization Success';
 
-    // logo and font from https://near.org/brand/
     return `
 <!DOCTYPE html>
 <html lang="en">

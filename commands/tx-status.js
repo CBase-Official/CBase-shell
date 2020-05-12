@@ -15,7 +15,7 @@ module.exports = {
         }),
     handler: exitOnError(async (argv) => {
         await eventtracking.track(eventtracking.EVENT_ID_TX_STATUS_START, { node: argv.nodeUrl });
-        const near = await connect(argv);
+        const cbase = await connect(argv);
 
         const hashParts = argv.hash.split(':');
         let hash, accountId;
@@ -32,7 +32,7 @@ module.exports = {
             throw new Error('Please specify account id, either as part of transaction hash or using --accountId flag.');
         }
 
-        const status = await near.connection.provider.txStatus(bs58.decode(hash), accountId);
+        const status = await cbase.connection.provider.txStatus(bs58.decode(hash), accountId);
         console.log(`Transaction ${accountId}:${hash}`);
         console.log(inspectResponse(status));
         await eventtracking.track(eventtracking.EVENT_ID_TX_STATUS_END, { node: argv.nodeUrl, success: true });

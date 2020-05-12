@@ -2,16 +2,16 @@ const { validators, utils } = require('near-api-js');
 const BN = require('bn.js');
 const AsciiTable = require('ascii-table');
 
-async function validatorsInfo(near, epochId) {
-    const genesisConfig = await near.connection.provider.sendJsonRpc('EXPERIMENTAL_genesis_config', {});
-    const result = await near.connection.provider.sendJsonRpc('validators', [epochId]);
+async function validatorsInfo(cbase, epochId) {
+    const genesisConfig = await cbase.connection.provider.sendJsonRpc('EXPERIMENTAL_genesis_config', {});
+    const result = await cbase.connection.provider.sendJsonRpc('validators', [epochId]);
     result.genesisConfig = genesisConfig;
     result.numSeats = genesisConfig.num_block_producer_seats + genesisConfig.avg_hidden_validator_seats_per_shard.reduce((a, b) => a + b);
     return result;
 }
 
-async function showValidatorsTable(near, epochId) {
-    const result = await validatorsInfo(near, epochId);
+async function showValidatorsTable(cbase, epochId) {
+    const result = await validatorsInfo(cbase, epochId);
     const seatPrice = validators.findSeatPrice(result.current_validators, result.numSeats);
     result.current_validators = result.current_validators.sort((a, b) => -new BN(a.stake).cmp(new BN(b.stake)));
     var validatorsTable = new AsciiTable();
@@ -29,8 +29,8 @@ async function showValidatorsTable(near, epochId) {
     console.log(validatorsTable.toString());
 }
 
-async function showNextValidatorsTable(near) {
-    const result = await validatorsInfo(near, null);
+async function showNextValidatorsTable(cbase) {
+    const result = await validatorsInfo(cbase, null);
     const nextSeatPrice = validators.findSeatPrice(result.next_validators, result.numSeats);
     result.next_validators = result.next_validators.sort((a, b) => -new BN(a.stake).cmp(new BN(b.stake)));
     const diff = validators.diffEpochValidators(result.current_validators, result.next_validators);
@@ -57,8 +57,8 @@ function combineValidatorsAndProposals(validators, proposalsMap) {
     return result.concat([...proposalsMap.values()]);
 }
 
-async function showProposalsTable(near) {
-    const result = await validatorsInfo(near, null);
+async function showProposalsTable(cbase) {
+    const result = await validatorsInfo(cbase, null);
     let currentValidators = new Map();
     result.current_validators.forEach((v) => currentValidators.set(v.account_id, v));
     let proposals = new Map();

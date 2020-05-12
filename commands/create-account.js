@@ -34,7 +34,7 @@ module.exports = {
 async function createAccount(options) {
     await eventtracking.track(eventtracking.EVENT_ID_CREATE_ACCOUNT_START, { nodeUrl: options.nodeUrl });
     // NOTE: initialBalance is passed as part of config here, parsed in middleware/initial-balance
-    let near = await connect(options);
+    let cbase = await connect(options);
     let keyPair;
     let publicKey;
     if (options.publicKey) {
@@ -43,9 +43,9 @@ async function createAccount(options) {
         keyPair = await KeyPair.fromRandom('ed25519');
         publicKey = keyPair.getPublicKey();
     }
-    await near.createAccount(options.accountId, publicKey);
+    await cbase.createAccount(options.accountId, publicKey);
     if (keyPair) {
-        await near.connection.signer.keyStore.setKey(options.networkId, options.accountId, keyPair);
+        await cbase.connection.signer.keyStore.setKey(options.networkId, options.accountId, keyPair);
     }
     console.log(`Account ${options.accountId} for network "${options.networkId}" was created.`);
     await eventtracking.track(eventtracking.EVENT_ID_CREATE_ACCOUNT_END, { node: options.nodeUrl, success: true });

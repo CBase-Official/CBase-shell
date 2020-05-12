@@ -28,7 +28,7 @@ globals:
   Cookies: true
   nearConfig: true
   nearlib: true
-  near: true
+  cbase: true
   walletAccount: true
   contract: true
   testSettings: true
