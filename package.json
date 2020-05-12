@@ -13,16 +13,16 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nearprotocol/near-shell.git"
+    "url": "git+https://github.com/CBase-Official/CBase-shell.git"
   },
   "author": "Jane Degtiareva",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/nearprotocol/near-shell/issues"
+    "url": "https://github.com/CBase-Official/CBase-shell/issues"
   },
-  "homepage": "https://github.com/nearprotocol/near-shell#readme",
+  "homepage": "https://github.com/CBase-Official/CBase-shell#readme",
   "bin": {
-    "near": "./bin/near"
+    "near": "./bin/cbase"
   },
   "devDependencies": {
     "eslint": "^7.0.0",

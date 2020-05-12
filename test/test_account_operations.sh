@@ -6,15 +6,15 @@ cd tmp-project
 timestamp=$(date +%s)
 testaccount=testaccount$timestamp
 echo Create account
-../bin/near create_account $testaccount
+../bin/cbase create_account $testaccount
 
 echo Get account state
-RESULT=$(../bin/near state $testaccount | strip-ansi)
+RESULT=$(../bin/cbase state $testaccount | strip-ansi)
 echo $RESULT
 EXPECTED=".+Account $testaccount.+amount:.+'100000000000000000000000000'.+ "
 if [[ ! "$RESULT" =~ $EXPECTED ]]; then
-    echo FAILURE Unexpected output from near view
+    echo FAILURE Unexpected output from cbase view
     exit 1
 fi
 
-../bin/near delete $testaccount test.near
+../bin/cbase delete $testaccount test.cbase

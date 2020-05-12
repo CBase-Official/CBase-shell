@@ -11,7 +11,7 @@ require('v8flags')((e, flags) => {
             if (ready) {
                 // Need to filter out '--no-respawning' to avoid yargs complaining about it
                 process.argv = process.argv.filter(arg => arg != '--no-respawning');
-                require('./near-cli.js');
+                require('./cbase-cli.js');
             }
         });
 })

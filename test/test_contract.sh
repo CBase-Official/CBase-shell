@@ -8,26 +8,26 @@ cd tmp-project
 
 timestamp=$(date +%s)
 testaccount=testaccount$timestamp
-../bin/near create_account $testaccount
+../bin/cbase create_account $testaccount
 
 echo Building contract
 yarn install
 yarn build
 
 echo Deploying contract
-../bin/near deploy --accountId=$testaccount --wasmFile=out/main.wasm
+../bin/cbase deploy --accountId=$testaccount --wasmFile=out/main.wasm
 
 echo Deploying contract to temporary accountId
 # TODO: Specify helperUrl in project template
-../bin/near dev-deploy
+../bin/cbase dev-deploy
 
 echo Calling functions
-../bin/near call $testaccount setGreeting '{"message":"TEST"}' --accountId=test.near
+../bin/cbase call $testaccount setGreeting '{"message":"TEST"}' --accountId=test.cbase
 
-RESULT=$(../bin/near view $testaccount welcome '{"account_id":"test.near"}' --accountId=test.near)
+RESULT=$(../bin/cbase view $testaccount welcome '{"account_id":"test.cbase"}' --accountId=test.cbase)
 TEXT=$RESULT
-EXPECTED='TEST test.near'
+EXPECTED='TEST test.cbase'
 if [[ ! $TEXT =~ .*$EXPECTED.* ]]; then
-    echo FAILURE Unexpected output from near call: $RESULT
+    echo FAILURE Unexpected output from cbase call: $RESULT
     exit 1
 fi
